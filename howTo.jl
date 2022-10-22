@@ -6,7 +6,7 @@
 
 #= Importing =#
 
-#= Variables =#
+#= Making variables =#
 
 a = True
 b = "num1"
