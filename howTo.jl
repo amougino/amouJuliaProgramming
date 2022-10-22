@@ -6,14 +6,16 @@
 
 #= Importing =#
 
+using time
+
 #= Making variables =#
 
-a = True
+a = true
 b = "num1"
 c = 3
 d = 2.4
 
-for i in 0:100:100000
+for i in 0:48:400
     println(i)
 end
 println(b)
