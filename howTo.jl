@@ -6,9 +6,16 @@
 
 #= Importing =#
 
-b = "done"
-for i in 0:1:10000000000
+#= Variables =#
+
+a = True
+b = "num1"
+c = 3
+d = 2.4
+
+for i in 0:100:100000
+    println(i)
 end
 println(b)
-b = 2
+b = "num2"
 println(b)
