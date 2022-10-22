@@ -2,8 +2,7 @@ using Gtk
 
 win = GtkWindow("window !", 400, 200)
 
-b = GtkButton("close window!!")
-push!(win,b)
+grid = GtkGrid()
 
 function on_button_clicked(w)
     println("The button has been clicked")
