@@ -1,62 +1,50 @@
-using Gtk, Graphics
+using Gtk
+using Graphics
 
-function on_red_clicked(w)
-    println("The red button has been clicked")
-  end
-
-size = 4 #Changeable
-width = size*200
-height = size*250
+winSize = 4 #Changeable
+width = winSize*200
+height = winSize*250
 sideSpacing = 10
 
-c = @GtkCanvas(width,height-(size*15))
-bv = GtkBox(:v)
-bh = GtkBox(:h)
+buttonList = ["Red","Orange","Yellow","Green","Blue","Purple","Brown","Pink","Delete","Enter"]
+#buttonList = [" Red  ","Orange","Yellow","Green "," Blue ","Purple","Brown "," Pink ","Delete","Enter "]
 
-win = GtkWindow("Mastermind v1.0",width,height)
+function init(size,wid,hei,buttons,margin)
+    win = GtkWindow("Mastermind v1.1",wid,hei)
+    c = @GtkCanvas(wid,hei-(size*15))
+    bv = GtkBox(:v)
+    bh = GtkBox(:h)
 
-@guarded draw(c) do widget
-    ctx = getgc(c)
-    for line in 0:3, row in 0:11 
-        rectangle(ctx, ((width/3.5) + ((width/6)*line)), ((height/15) + ((height/14)*row)), (width/20), ((height*(4/5))/20))
+    @guarded draw(c) do widget
+        ctx = getgc(c)
+        for line in 0:3, row in 0:11 
+            rectangle(ctx, ((wid/3.5) + ((wid/6)*line)), ((hei/15) + ((hei/14)*row)), (wid/20), ((hei*(4/5))/20))
+        end
+        set_source_rgb(ctx, 0.75, 0.75, 0.75)
+        fill(ctx)
     end
-    set_source_rgb(ctx, 0.75, 0.75, 0.75)
-    fill(ctx)
+
+    for i in buttons
+        b = GtkButton(i)
+        signal_connect(onButtonClicked,b,"clicked")
+        push!(bh,b)
+    end
+
+    set_gtk_property!(bh, :spacing, margin)
+    set_gtk_property!(bh, :margin_top, margin)
+    set_gtk_property!(bh, :margin_bottom, margin)
+    set_gtk_property!(bh, :margin_left, margin)
+    set_gtk_property!(bh, :margin_right, margin)
+
+    push!(bv,c)
+    push!(bv,bh)
+    push!(win,bv)
+
+    showall(win)
 end
 
-push!(bh,GtkButton("Red"))
-push!(bh,GtkButton("Orange"))
-push!(bh,GtkButton("Yellow"))
-push!(bh,GtkButton("Green"))
-push!(bh,GtkButton("Blue"))
-push!(bh,GtkButton("Purple"))
-push!(bh,GtkButton("Brown"))
-push!(bh,GtkButton("Pink"))
-push!(bh,GtkButton("Delete"))
-push!(bh,GtkButton("Enter"))
+function onButtonClicked(button)
+    println("$(get_gtk_property(button,:label,String)) has been clicked")
+end
 
-set_gtk_property!(bh, :spacing, sideSpacing)
-
-set_gtk_property!(bh, :margin_top, sideSpacing)
-set_gtk_property!(bh, :margin_bottom, sideSpacing)
-set_gtk_property!(bh, :margin_left, sideSpacing)
-set_gtk_property!(bh, :margin_right, sideSpacing)
-
-push!(bv,c)
-
-push!(bv,bh)
-
-push!(win,bv)
-
-#=set_gtk_property!(g, :column_homogeneous, true)
-set_gtk_property!(g, :row_homogeneous, true)
-set_gtk_property!(g, :column_spacing, sideSpacing)
-set_gtk_property!(g, :row_spacing, sideSpacing)
-set_gtk_property!(g, :margin_top, sideSpacing)
-set_gtk_property!(g, :margin_bottom, sideSpacing)
-set_gtk_property!(g, :margin_left, sideSpacing)
-set_gtk_property!(g, :margin_right, sideSpacing)=#
-
-#signal_connect(on_red_clicked, g[0,1], "clicked")
-#push!(win,c)
-showall(win)
+init(winSize,width,height,buttonList,sideSpacing)
