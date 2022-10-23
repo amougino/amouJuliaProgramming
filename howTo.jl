@@ -1,14 +1,14 @@
-#= This is how you write a comment =#
+#= This is how you write a comment that can stretch several lines 
 
-#= This is my personalized guide into Julia =#
+This is my personalized guide into Julia =#
 
-#= To execute a file in Julia, go to the Julia REPL (Read–eval–print loop) and type include("path") =#
+# To execute a file in Julia, go to the Julia REPL (Read–eval–print loop) and type include("path")
 
-#= Importing =#
+# Importing
 
-using time
+using Random
 
-#= Making variables =#
+# Making variables
 
 a = true
 b = "num1"
