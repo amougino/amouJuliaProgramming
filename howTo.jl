@@ -16,8 +16,9 @@ c = 3
 d = 2.4
 
 for i in 0:48:400
-    println(i)
+    println("$i, $a, $b, $c, $d")
 end
+
 println(b)
 b = "num2"
 println(b)
