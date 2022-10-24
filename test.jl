@@ -2,15 +2,18 @@ using Gtk
 using Cairo
 
 global drawInt = 0
+global red = 0
 
 function draw_c(widget)
    ctx = Gtk.getgc(widget)
 
    global drawInt
    drawInt += 1
-
-   rectangle(ctx, 0, 0, 20.0*drawInt, 30.0*drawInt)
-   set_source_rgb(ctx, 1, 0, 0)
+   
+   rectangle(ctx, drawInt*50, 0, 20, 20)
+   global red
+   red += 0.1
+   set_source_rgb(ctx, red, 0, 0)
    fill(ctx)   
    
 end
