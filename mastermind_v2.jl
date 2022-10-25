@@ -2,42 +2,17 @@ using Gtk
 using Graphics
 using Random
 
-winSize = 4
-winWidth = winSize*200
-winHeight = winSize*250
-margin = 10
-gen = 0
-
-col = 0
-row = 0
-
-buttonList = ["Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Brown", "Pink", "Delete", "Enter"]
-colors = ["Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Brown", "Pink"]
-
-default = [0.75,0.75,0.75]
-
-red = [1,0,0]
-orange = [1,0.5,0]
-yellow = [1,1,0.1]
-green = [0,1,0]
-blue = [0,0,1]
-purple = [0.6,0.12,0.94]
-brown = [0.6,0.3,0]
-pink = [1,0.75,0.8]
-
-currentCode = []
-
 function generateCode()
     code = []
     while size(code)[1] <= 3
         obj = Random.rand(colors, 1)
-        push!(code, obj)
+        push!(code, string(obj[1]))
     end
     return(code)
 end
 
 function onButtonClicked(button)
-    println("$( get_gtk_property(button, :label, String) ) has been clicked")
+    #println("$( get_gtk_property(button, :label, String) ) has been clicked")
     global col
     global row
     global colors
@@ -59,11 +34,15 @@ function onButtonClicked(button)
             deleteat!(currentCode, size(currentCode)[1])
         end
     elseif buttonName == "Enter"
-        println(col)
         if col == 4
-
+            global result
+            result = checkCode(gameCode, currentCode)
+            c.draw = showComparison
+            draw(c)
+            col = 0
+            row += 1
+            currentCode = []
         end
-        println(currentCode)
     end
 end
 
@@ -113,28 +92,84 @@ function deleteC(widget)
     fill(ctx)
 end
 
+function showComparison(widget)
+    global result
+    #println(result)
+    answers = 0
+    ctx = getgc(widget)
+    for line in answers:(result[2] - 1)
+        rectangle(ctx, ( ( winWidth / 30 ) + ( ( winWidth / 15.5 ) * line ) ), ( ( winHeight / 12.8 ) + ( ( winHeight / 14 ) * row ) ), ( winWidth / 50 ), ( ( winHeight * ( 4 / 5 ) ) / 50 ) )
+        set_source_rgb(ctx, 0, 0.7, 0)
+        answers += 1
+    end
+    fill(ctx)
+    ctx = getgc(widget)
+    for line in answers:(answers + result[1] - 1)
+        rectangle(ctx, ( ( winWidth / 30 ) + ( ( winWidth / 15.5 ) * line ) ), ( ( winHeight / 12.8 ) + ( ( winHeight / 14 ) * row ) ), ( winWidth / 50 ), ( ( winHeight * ( 4 / 5 ) ) / 50 ) )
+        set_source_rgb(ctx, 0.9, 0.9, 0.1)
+        answers += 1
+    end
+    fill(ctx)
+    ctx = getgc(widget)
+    for line in answers:3
+        rectangle(ctx, ( ( winWidth / 30 ) + ( ( winWidth / 15.5 ) * line ) ), ( ( winHeight / 12.8 ) + ( ( winHeight / 14 ) * row ) ), ( winWidth / 50 ), ( ( winHeight * ( 4 / 5 ) ) / 50 ) )
+        set_source_rgb(ctx, 0.5, 0.5, 0.5)
+    end
+    fill(ctx)
+end
+
 function checkCode(code,answer)
     wrongPlacement = 0
     rightPlacement = 0
+    codeAnalyse = deepcopy(code)
+    answerAnalyse = deepcopy(answer)
     for i in 1:4
-        if answer[i] == code[i]
-            answer[i] = 0
-            code[i] = 0
+        if answerAnalyse[i] == codeAnalyse[i]
+            answerAnalyse[i] = "0"
+            codeAnalyse[i] = "0"
             rightPlacement += 1
         end
-        
     end
     for i in 1:4, j in 1:4
-        if answer[i] != 0
-            if answer[i] == code[j]
-                answer[i] = 0
-                code[j] = 0
+        if answerAnalyse[i] != "0"
+            if answerAnalyse[i] == codeAnalyse[j]
+                answerAnalyse[i] = "0"
+                codeAnalyse[j] = "0"
                 wrongPlacement += 1
             end
         end
     end
     return([wrongPlacement,rightPlacement])
 end
+
+winSize = 4
+winWidth = winSize*200
+winHeight = winSize*250
+margin = 10
+gen = 0
+
+col = 0
+row = 0
+
+result = []
+
+buttonList = ["Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Brown", "Pink", "Delete", "Enter"]
+colors = ["Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Brown", "Pink"]
+
+default = [0.75,0.75,0.75]
+
+red = [1,0,0]
+orange = [1,0.5,0]
+yellow = [1,1,0.1]
+green = [0,1,0]
+blue = [0,0,1]
+purple = [0.6,0.12,0.94]
+brown = [0.6,0.3,0]
+pink = [1,0.75,0.8]
+
+currentCode = []
+
+
 
 win = GtkWindow("Mastermind v1.1", winWidth, winHeight)
 c = @GtkCanvas(winWidth, winHeight - ( winSize * 15 ))
@@ -167,6 +202,6 @@ set_gtk_property!(bh, :margin_right, margin)
 push!(bv, c)
 push!(bv, bh)
 push!(win, bv)
-
+gameCode = generateCode()
 Gtk.showall(win)
-global gameCode = generateCode()
+println("Starting Game...")
